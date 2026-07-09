@@ -4,7 +4,7 @@ A lightweight quoting application for modeling SaaS client pricing and producing
 
 ## Live Demo
 
-- **Application**: [https://monetizely-quoting.vercel.app](https://monetizely-quoting.vercel.app) *(deploy to Vercel and update this URL)*
+- **Application**: [https://monetizely-quoting.vercel.app]([https://monetizely-quoting.vercel.app](https://monetizely-quoting-five.vercel.app/)) *(deploy to Vercel and update this URL)*
 - **GitHub**: [https://github.com/your-username/monetizely-quoting](https://github.com/your-username/monetizely-quoting) *(update this URL)*
 
 ---
