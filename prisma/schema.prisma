@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Product - main product entity (e.g., "Design Platform Pro")
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tiers    Tier[]
+  features Feature[]
+  quotes   Quote[]
+}
+
+// Tier - product tiers (e.g., Starter, Growth, Enterprise)
+// basePrice is per seat per month in cents
+model Tier {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  basePrice    Int      // Price per seat per month in cents
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  featureConfigs FeatureTierConfig[]
+  quotes         Quote[]
+
+  @@index([productId])
+}
+
+// Feature - features that can be assigned to tiers
+model Feature {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  tierConfigs FeatureTierConfig[]
+
+  @@index([productId])
+}
+
+// FeatureTierConfig - defines how a feature is available in a specific tier
+// availability: "included" | "addon" | "not_available"
+// pricingModel (for addons): "fixed" | "per_seat" | "percentage"
+// price: the price value (cents for fixed/per_seat, basis points for percentage - 1000 = 10%)
+model FeatureTierConfig {
+  id           String  @id @default(cuid())
+  availability String  // "included" | "addon" | "not_available"
+  pricingModel String? // "fixed" | "per_seat" | "percentage" (only for addons)
+  price        Int?    // Price in cents or basis points for percentage
+
+  featureId String
+  feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  tierId String
+  tier   Tier   @relation(fields: [tierId], references: [id], onDelete: Cascade)
+
+  quoteAddOns QuoteAddOn[]
+
+  @@unique([featureId, tierId])
+  @@index([featureId])
+  @@index([tierId])
+}
+
+// Quote - a saved quote for a customer
+// termLength: "monthly" | "annual" | "two_year"
+// discountPercent: stored as basis points (1000 = 10%)
+model Quote {
+  id              String   @id @default(cuid())
+  name            String   // e.g., "Acme Corp - Q3 2026 proposal"
+  customerName    String?
+  seats           Int
+  termLength      String   // "monthly" | "annual" | "two_year"
+  discountPercent Int      @default(0) // basis points (1000 = 10%)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Snapshot fields - store the values at quote creation time
+  productName     String
+  tierName        String
+  basePricePerSeat Int // Price per seat per month in cents at quote time
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  tierId String
+  tier   Tier   @relation(fields: [tierId], references: [id])
+
+  addOns QuoteAddOn[]
+
+  @@index([productId])
+  @@index([tierId])
+}
+
+// QuoteAddOn - add-ons selected in a quote
+model QuoteAddOn {
+  id       String @id @default(cuid())
+  quantity Int    @default(1) // For per-seat add-ons
+
+  // Snapshot fields
+  featureName  String
+  pricingModel String // "fixed" | "per_seat" | "percentage"
+  price        Int    // Price in cents or basis points
+
+  quoteId String
+  quote   Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  featureTierConfigId String
+  featureTierConfig   FeatureTierConfig @relation(fields: [featureTierConfigId], references: [id])
+
+  @@index([quoteId])
+}
