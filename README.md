@@ -4,8 +4,8 @@ A lightweight quoting application for modeling SaaS client pricing and producing
 
 ## Live Demo
 
-- **Application**: [https://monetizely-quoting.vercel.app]([https://monetizely-quoting.vercel.app](https://monetizely-quoting-five.vercel.app/)) *(deploy to Vercel and update this URL)*
-- **GitHub**: [https://github.com/your-username/monetizely-quoting](https://github.com/your-username/monetizely-quoting) *(update this URL)*
+- **Application**: [https://monetizely-quoting-five.vercel.app](https://monetizely-quoting-five.vercel.app)
+- **GitHub**: [https://github.com/AYUSH190701/monetizely-quoting](https://github.com/AYUSH190701/monetizely-quoting)
 
 ---
 
@@ -19,7 +19,7 @@ A lightweight quoting application for modeling SaaS client pricing and producing
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/monetizely-quoting.git
+git clone https://github.com/AYUSH190701/monetizely-quoting.git
 cd monetizely-quoting
 
 # 2. Install dependencies
